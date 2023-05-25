@@ -26,7 +26,23 @@ function agregarTweet(e) {
         mostrarError('No puedes agregar un mensaje vacio');
 
         return; // utilizamos return con el fin de que no se ejecute ninguna linea mas despues del mensaje
-    }
+    };
+
+    const tweetObj = {
+        id: Date.now(),
+        tweet //en js moderno si el nombre de la propiedad dentro del objeto es igual a la variable que recibe la propiedad como valor se puede colocar solo una vez el nombre 
+
+    };
+
+    // añadir al arreglo de tweets
+    tweets = [...tweets,...tweetObj];
+
+    // crear HTML
+    crearHTML();
+
+    // reiniciar el formulario
+    formulario.reset();
+
 };
 
 
@@ -40,4 +56,35 @@ function mostrarError(error) {
     const contenido = document.querySelector('#contenido');
     contenido.appendChild(mensajeError);
 
+    setTimeout(() => {
+        mensajeError.remove();
+    },3000);
+
+};
+
+// funcion que muestra el listado de los tweets
+function crearHTML() {
+
+    limpiarHTML();
+
+    if(tweets.length > 0) {
+        tweets.forEach(tweet => {
+            // crear el HTML
+
+            const li = document.createElement('li');
+
+            // añadir el texto
+            li.innerHTML = tweet.tweet;
+
+            // insertarlo en el html
+            listaTweets.appendChild(li)
+        })
+  ;  }
+};
+
+// limpiar HTML
+function limpiarHTML() {
+    while (listaTweets.firstChild) {
+        listaTweets.removeChild(listaTweets.firstChild);
+    };
 };
