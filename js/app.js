@@ -1,90 +1,115 @@
-// variables
-const formulario = document.querySelector('#formulario');
+// Variables
 const listaTweets = document.querySelector('#lista-tweets');
+const formulario = document.querySelector('#formulario');
 let tweets = [];
 
-
-
-// event listeners
+// Event Listeners
 eventListeners();
 
 function eventListeners() {
-    formulario.addEventListener('submit', agregarTweet);
-};
+     //Cuando se envia el formulario
+     formulario.addEventListener('submit', agregarTweet);
 
+     // Borrar Tweets
+     listaTweets.addEventListener('click', borrarTweet);
 
+     // Contenido cargado
+     document.addEventListener('DOMContentLoaded', () => {
+          tweets = JSON.parse( localStorage.getItem('tweets') ) || []  ;
+          console.log(tweets);
+          crearHTML();
+     });
+}
 
-// funciones
+// Añadir tweet del formulario
 function agregarTweet(e) {
-    e.preventDefault();
+     e.preventDefault();
+     // leer el valor del textarea
+     const tweet = document.querySelector('#tweet').value;
+     
+     // validación
+     if(tweet === '') {
+          mostrarError('Un mensaje no puede ir vacio');
+          return;
+     }
 
-    // textarea donde el usuario escribe
-    const tweet = document.querySelector('#tweet').value;
+     // Crear un objeto Tweet
+     const tweetObj = {
+          id: Date.now(),
+          texto: tweet
+     }
 
-    // validacion del tweet
-    if (tweet === ''){
-        mostrarError('No puedes agregar un mensaje vacio');
+     // Añadirlo a mis tweets
+     tweets = [...tweets, tweetObj];
+     
+     // Una vez agregado, mandamos renderizar nuestro HTML
+     crearHTML();
 
-        return; // utilizamos return con el fin de que no se ejecute ninguna linea mas despues del mensaje
-    };
+     // Reiniciar el formulario
+     formulario.reset();
+}
 
-    const tweetObj = {
-        id: Date.now(),
-        tweet //en js moderno si el nombre de la propiedad dentro del objeto es igual a la variable que recibe la propiedad como valor se puede colocar solo una vez el nombre 
-
-    };
-
-    // añadir al arreglo de tweets
-    tweets = [...tweets,...tweetObj];
-
-    // crear HTML
-    crearHTML();
-
-    // reiniciar el formulario
-    formulario.reset();
-
-};
-
-
-// mostrar error
 function mostrarError(error) {
-    const mensajeError = document.createElement('P');
-    mensajeError.textContent = error;
-    mensajeError.classList.add('error');
+     const mensajeEerror = document.createElement('p');
+     mensajeEerror.textContent = error;
+     mensajeEerror.classList.add('error');
 
-    // insertarlo en el contenido
-    const contenido = document.querySelector('#contenido');
-    contenido.appendChild(mensajeError);
+     const contenido = document.querySelector('#contenido');
+     contenido.appendChild(mensajeEerror);
 
-    setTimeout(() => {
-        mensajeError.remove();
-    },3000);
+     setTimeout(() => {
+          mensajeEerror.remove();
+     }, 3000);
+}
 
-};
-
-// funcion que muestra el listado de los tweets
 function crearHTML() {
+     limpiarHTML();
+     
+     if(tweets.length > 0 ) {
+          tweets.forEach( tweet =>  {
+               // crear boton de eliminar
+               const botonBorrar = document.createElement('a');
+               botonBorrar.classList = 'borrar-tweet';
+               botonBorrar.innerText = 'X';
+     
+               // Crear elemento y añadirle el contenido a la lista
+               const li = document.createElement('li');
 
-    limpiarHTML();
+               // Añade el texto
+               li.innerText = tweet.texto;
 
-    if(tweets.length > 0) {
-        tweets.forEach(tweet => {
-            // crear el HTML
+               // añade el botón de borrar al tweet
+               li.appendChild(botonBorrar);
 
-            const li = document.createElement('li');
+               // añade un atributo único...
+               li.dataset.tweetId = tweet.id;
 
-            // añadir el texto
-            li.innerHTML = tweet.tweet;
+               // añade el tweet a la lista
+               listaTweets.appendChild(li);
+          });
+     }
 
-            // insertarlo en el html
-            listaTweets.appendChild(li)
-        })
-  ;  }
-};
+     sincronizarStorage();
+}
 
-// limpiar HTML
+// Elimina el Tweet del DOM
+function borrarTweet(e) {
+     e.preventDefault();
+
+     // console.log(e.target.parentElement.dataset.tweetId);
+     const id = e.target.parentElement.dataset.tweetId;
+     tweets = tweets.filter( tweet => tweet.id != id  );
+     crearHTML();
+}
+
+// Agrega tweet a local storage
+function sincronizarStorage() {
+     localStorage.setItem('tweets', JSON.stringify(tweets));
+}
+
+// Elimina los cursos del carrito en el DOM
 function limpiarHTML() {
-    while (listaTweets.firstChild) {
-        listaTweets.removeChild(listaTweets.firstChild);
-    };
-};
+     while(listaTweets.firstChild) {
+          listaTweets.removeChild(listaTweets.firstChild);
+     }
+}
