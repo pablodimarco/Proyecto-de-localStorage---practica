@@ -31,13 +31,13 @@ function agregarTweet(e) {
      if(tweet === '') {
           mostrarError('Un mensaje no puede ir vacio');
           return;
-     }
+     };
 
      // Crear un objeto Tweet
      const tweetObj = {
           id: Date.now(),
           texto: tweet
-     }
+     };
 
      // Añadirlo a mis tweets
      tweets = [...tweets, tweetObj];
@@ -47,7 +47,7 @@ function agregarTweet(e) {
 
      // Reiniciar el formulario
      formulario.reset();
-}
+};
 
 function mostrarError(error) {
      const mensajeEerror = document.createElement('p');
@@ -60,7 +60,7 @@ function mostrarError(error) {
      setTimeout(() => {
           mensajeEerror.remove();
      }, 3000);
-}
+};
 
 function crearHTML() {
      limpiarHTML();
@@ -87,10 +87,10 @@ function crearHTML() {
                // añade el tweet a la lista
                listaTweets.appendChild(li);
           });
-     }
+     };
 
      sincronizarStorage();
-}
+};
 
 // Elimina el Tweet del DOM
 function borrarTweet(e) {
@@ -100,16 +100,16 @@ function borrarTweet(e) {
      const id = e.target.parentElement.dataset.tweetId;
      tweets = tweets.filter( tweet => tweet.id != id  );
      crearHTML();
-}
+};
 
 // Agrega tweet a local storage
 function sincronizarStorage() {
      localStorage.setItem('tweets', JSON.stringify(tweets));
-}
+};
 
 // Elimina los cursos del carrito en el DOM
 function limpiarHTML() {
      while(listaTweets.firstChild) {
           listaTweets.removeChild(listaTweets.firstChild);
-     }
-}
+     };
+};
